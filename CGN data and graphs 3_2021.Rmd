@@ -1,0 +1,227 @@
+---
+title: "CGN Data"
+author: "Denver Ncube"
+date: "6/29/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(car)
+library(reshape2)
+library(data.table)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(plotly)
+library(pastecs)
+library(gridExtra)
+library(readxl)
+```
+
+```{r}
+CG <- read.table('~/Desktop/ADVANCED BIOSTATS/FOR R.csv', sep = ",",header =T)
+CG
+#group_by(DF)%>%summarise(avg= mean(Total.GFP))
+```
+# this part is not required: 
+
+
+```{r}
+
+
+```
+#Next split the data sets into 3 parts to then strictly analyze the trends
+```{r}
+#Plot for GFP.CGN
+CGN <- ggplot(CG) +
+  aes(x = Region, y= Percentage, fill= Region) + 
+  geom_boxplot() + 
+ # geom_violin()+
+  scale_fill_manual(values=c("green", "magenta", "blue")) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 110))+
+  geom_jitter()+
+  ggtitle("Cholinergic and GABAergic vTely321 neurons") + theme(plot.title =  element_text(size=12))+ 
+  xlab("Forebrain Region") + ylab("Percentage %") +
+  theme_classic()
+CGN
+#Now to constrain the width, arrange the 
+ A <- grid.arrange(CGN, ncol= 3)
+ A
+#ggsave("Fig_5.png", Fig_5)
+#Fig_2 <- grid.arrange(CGN, NCGN, nrow=1)
+#ggsave("Fig_2.jpeg", Fig_2)
+```
+
+```{r}
+
+
+CG$Region <- factor(CG$Region,
+    levels = c('RT','MT', 'CT'),ordered = TRUE)
+factor(CG$Region,levels = rev(levels(CG$Region)),ordered = TRUE)
+
+GGA <- ggplot(CG) +
+    aes(x = Region, y= Vp, fill= Region) +
+  geom_boxplot() + #geom_violin()+ 
+  scale_fill_manual(values=c("green", "magenta", "blue")) +
+  geom_jitter()+
+ scale_y_continuous(expand = c(0, 0), limits = c(0, 100))+
+  ggtitle("CGNeurons at 48hpf") + theme(plot.title = element_text(size=12)) +
+ xlab("Forebrain region") + ylab("Percentage %") +
+  theme_classic()
+GGA
+
+#Plot for GFP VACHTb 
+VG <- ggplot(CG) +
+  aes(x = Region, y= Gp, fill= Region) +
+  geom_boxplot() + #geom_violin()+
+  scale_fill_manual(values=c("green", "magenta", "blue")) +
+  geom_jitter()+
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 100))+
+  ggtitle("CGNeurons at 4dpf") + theme(plot.title = element_text(size=12))+
+  xlab("Forebrain region") + ylab("Percentage %") +
+  theme_classic()
+VG
+
+A <- grid.arrange(GGA, VG, ncol= 3)
+ A
+```
+
+
+
+
+
+```{r}
+
+CG$Region <- factor(CG$Region,
+    levels = c('CT','MT', 'RT'),ordered = TRUE)
+factor(CG$Region,levels = rev(levels(CG$Region)),ordered = TRUE)
+
+CG$Region <- with(CG, relevel(Region, "RT"))
+ggplot((CG)+ aes(x= Region)) + geom_boxplot() +
+         scale_fill_manual(values=c("green", "magenta", "blue")) + 
+         scale_y_continuous(expand = c(0, 0), limits = c(0, 110))+
+         ggtitle("Cholinergic and GABAergic vTely321 neurons") + theme(plot.title = element_text(size=12))+  xlab("Forebrain Region") + ylab("Percentage %") +
+  theme_classic()
+#R <- factor(CG$Percentage),levels = rev(levels(CG$Percentage)), ordered = TRUE)
+#R
+```
+
+
+
+#Pick out only the 
+#C <- bind_rows(RT, MT, CT)
+#C
+#make historgrams by region 
+#TOTAL  GFP 
+#Plot for GFP.GABA
+#GGA <- ggplot(DF) +
+#  aes(x = REGION, y= BOTH, fill= REGION) +
+#  geom_boxplot() + #geom_violin()+ 
+#  scale_fill_manual(values=c("green", "magenta", "blue")) +
+  #geom_jitter()+
+#  scale_y_continuous(expand = c(0, 0), limits = c(0, 100))+
+#  ggtitle("CGNeurons at 48hpf") + theme(plot.title = element_text(size=12))+
+# xlab("Forebrain region") + ylab("Percentage %") +
+#  theme_linedraw()
+#GGA
+
+#Plot for GFP VACHTb 
+VG <- ggplot(DF) +
+  aes(x = REGION, y= X.GFP.VACHTb, fill= REGION) +
+  geom_boxplot() + #geom_violin()+
+  scale_fill_manual(values=c("green", "magenta", "blue")) +
+  #geom_jitter()+
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 100))+
+  ggtitle("CGNeurons at 4dpf") + theme(plot.title = element_text(size=12))+
+  xlab("Forebrain region") + ylab("Percentage %") +
+  theme_linedraw()
+VG
+
+
+
+
+
+
+#Not needed 
+#GFP <- ggplot(DF) + aes(x = REGION, y =Total.GFP, fill= REGION) + geom_boxplot() + scale_fill_manual(values=c("red2", "royal blue", "magenta")) + geom_jitter()+  facet_wrap(~REGION, scales="free_x")+ ggtitle("Total GFP positive Neurons by Region") + theme(plot.title = element_text(size=12))+ xlab(NULL) + ylab(NULL) + theme_bw()
+#Plot for non-GFP cells but CGN
+#NCGN <- ggplot(DF) + aes(x = REGION, y= BOTH, fill= REGION) + geom_boxplot() + scale_fill_manual(values=c("red2", "royal blue", "magenta")) + geom_jitter()+ facet_wrap(~REGION, scales="free_x")+ ggtitle("Dual non-GFP positive CGN ") + theme(plot.title = element_text(size=12))+ xlab(NULL) + ylab(NULL) + theme_bw()
+
+
+```{r}
+VX <- ggplot(DF) +
+  aes(x = REGION, y = VACHTB, fill= REGION) +
+  geom_boxplot() +
+  scale_fill_manual(values=c("red2", "royal blue", "magenta")) +
+  geom_jitter()+
+  #geom_volcano(position = position_nudge(x=0.2, y=), adjust = 2)+
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 0.3))+
+  #facet_wrap(~REGION, scales="free_x")+
+  ggtitle("Percentage of GFP positive cholinergic only Neurons by Region") + theme(plot.title = element_text(size=12))+
+  xlab("Brain Region") + ylab("Percent") +
+  theme_classic()
+VX 
+
+GX <- ggplot(DF) +
+  aes(x = REGION, y =GABA, fill= REGION) +
+  geom_boxplot() +
+  scale_fill_manual(values=c("red2", "royal blue", "magenta")) +
+  geom_jitter()+
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 0.3))+
+  #facet_wrap(~REGION, scales="free_x")+
+  ggtitle("Percentage of GFP positive GABAergic only Neurons by Region") + theme(plot.title = element_text(size=12))+
+  xlab("Brain Region") + ylab("Percent") +
+  theme_classic()
+GX
+
+# Conclusion: Most of the cholinergic neurons are also GABAergic in the selected region. Caveat is that the sample was taken form 3 anatomical positions we would need to have thinner sections to come up with a volumetric measurement. 
+##grid.arrange(VO, GO, nrow=1)
+```
+
+V_O <- ggplot(DF, aes(x = REGION, y = X.VACHTB, fill= REGION)) +
+geom_point(show.legend = FALSE, alpha = 0.7) +
+geom_dotplot() +
+scale_color_viridis_d() +
+scale_size(range = c(2, 12)) +
+scale_x_discrete() + 
+labs(x = 'Forebrain Region', y = 'Percentage of Cholinergic neurons') +
+  theme_classic()
+V_O
+
+V2 <- ggplot(DF, aes(x = REGION, y = X.VACHTB, fill= REGION)) +
+geom_point(show.legend = FALSE, alpha = 0.7) +
+scale_color_viridis_d() +
+scale_size(range = c(2, 12)) +
+scale_y_log10() +
+labs(x = 'Forebrain Region', y = 'Percentage of Cholinergic neurons')
+
+ggplot(DF, aes(x = REGION, y = X.VACHTB, fill= REGION)) +
+geom_point(show.legend = FALSE, alpha = 0.7) +
+scale_color_viridis_d() +
+scale_size(range = c(2, 12)) +
+scale_x_discrete() +
+labs(x = 'Forebrain Region', y = 'Number of Cholinergic neurons')
+
+```{r}
+L <- read.table('~/Desktop/ADVANCED BIOSTATS/LIMTF.csv', sep = ",",header =T)
+L
+```
+
+```{r}
+LIM <- ggplot(L) +
+  aes(x = L[1:5,3], y = Average, fill= ) +
+  geom_boxplot() + #geom_violin()+
+  scale_fill_manual(values=c("green", "cyan", "red")) +
+  #geom_jitter()+
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 100))+
+  ggtitle("Average percentage of Vtel-y321 neurons expressing LIMTF") + theme(plot.title = element_text(size=12))+
+  xlab("Forebrain region") + ylab("Percentage %") +
+  theme_linedraw()
+LIM
+```
+
