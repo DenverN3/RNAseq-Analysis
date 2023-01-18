@@ -1,0 +1,58 @@
+---
+title: "seurat"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+```{r}
+devtools::install_github('satijalab/seurat-data')
+SeuratData::InstallData("pbmc3k")
+```
+
+
+```{r}
+library(Seurat)
+library(SeuratData)
+```
+
+```{r}
+
+library(Seurat)
+library(SeuratData)
+library(ggplot2)
+library(patchwork)
+data("pbmc3k.final")
+pbmc3k.final$groups <- sample(c("group1", "group2"), size = ncol(pbmc3k.final), replace = TRUE)
+features <- c("LYZ", "CCL5", "IL32", "PTPRCAP", "FCGR3A", "PF4")
+pbmc3k.final
+ #pbmc3k
+```
+
+```{r}
+# Ridge plots - from ggridges. Visualize single cell expression distributions in each cluster
+RidgePlot(pbmc3k.final, features = features, ncol = 2)
+```
+```{r}
+# Violin plot - Visualize single cell expression distributions in each cluster
+VlnPlot(pbmc3k.final, features = features)
+```
+
+```{r}
+# Feature plot - visualize feature expression in low-dimensional space
+FeaturePlot(pbmc3k.final, features = features)
+```
+
+```{r}
+# Dot plots - the size of the dot corresponds to the percentage of cells expressing the feature
+# in each cluster. The color represents the average expression level
+DotPlot(pbmc3k.final, features = features) + RotatedAxis()
+```
+```{r}
+# Single cell heatmap of feature expression
+DoHeatmap(subset(pbmc3k.final, downsample = 100), features = features, size = 3)
+```
+
